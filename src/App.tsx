@@ -8,7 +8,11 @@ export default function App() {
   const [tasks, setTasks ] = useState<Task[]>([])
 
   useEffect(() => {
-    taskRepo.find().then(setTasks)
+    taskRepo
+    .find({
+      limit: 20,
+      orderBy: { createdAt: 'desc' },
+    }).then(setTasks)
   }, [])
   return (
     <div>
