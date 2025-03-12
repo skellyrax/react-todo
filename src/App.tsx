@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { remult } from 'remult'
 import { Task } from './shared/Task'
+import { TasksController } from './shared/TasksController'
 
 const taskRepo = remult.repo(Task)
 
@@ -16,6 +17,10 @@ export default function App() {
     } catch (error: unknown) {
       alert((error as { message: string }).message)
     }
+  }
+
+  const setAllCompleted = async (completed: boolean) => {
+    await TasksController.setAllCompleted(completed)
   }
 
   // liveQuery and subscribe used to update tasks in real-time
@@ -63,6 +68,7 @@ export default function App() {
                 alert((error as { message: string }).message)
               }
             }
+            
             return (
               <div key={task.id}>
                 <input
@@ -77,6 +83,10 @@ export default function App() {
             )
           })
         }
+        <div>
+          <button onClick={() => setAllCompleted(true)}>Set All Completed</button>d
+          <button onClick={() => setAllCompleted(false)}>Set All Uncompleted</button>
+        </div>
       </main>
     </div>
   )
