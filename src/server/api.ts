@@ -3,5 +3,5 @@ import { Task } from '../shared/Task.js'
 
 export const api = remultExpress({
     entities: [Task],
-    admin: true, // enable react admin ui
+    admin: true, // enable admin ui
 })

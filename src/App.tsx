@@ -11,21 +11,21 @@ export default function App() {
   const addTask = async (e: FormEvent) => {
     e.preventDefault()
     try {
-      const newTask = await taskRepo.insert({ title: newTaskTitle })
-      setTasks([...tasks, newTask])
+      await taskRepo.insert({ title: newTaskTitle })
       setNewTaskTitle("")
     } catch (error: unknown) {
       alert((error as { message: string }).message)
     }
   }
 
+  // liveQuery and subscribe used to update tasks in real-time
   useEffect(() => {
     taskRepo
-      .find({
+      .liveQuery({
         limit: 20,
         orderBy: { createdAt: 'asc' },
         // where: { completed: true },
-      }).then(setTasks)
+      }).subscribe(info => setTasks(info.applyChanges))
   }, [])
   return (
     <div>
@@ -44,13 +44,13 @@ export default function App() {
             const setTask = (value: Task) =>
               setTasks(tasks => tasks.map(t => (t === task ? value : t)))
             const setCompleted = async (completed: boolean) =>
-              setTask(await taskRepo.save({...task, completed }))
+              await taskRepo.save({...task, completed })
 
             const setTitle = (title: string) => setTask({ ...task, title })
 
             const saveTask = async () => {
               try {
-                setTask(await taskRepo.save(task))
+                await taskRepo.save(task)
               } catch(error: unknown) {
                 alert((error as { message: string }).message)
               }
@@ -59,7 +59,6 @@ export default function App() {
             const deleteTask = async () => {
               try {
                 await taskRepo.delete(task)
-                setTasks(tasks.filter(t => t !== task))
               } catch (error: unknown) {
                 alert((error as { message: string }).message)
               }
