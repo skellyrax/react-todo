@@ -45,6 +45,25 @@ export default function App() {
               setTasks(tasks => tasks.map(t => (t === task ? value : t)))
             const setCompleted = async (completed: boolean) =>
               setTask(await taskRepo.save({...task, completed }))
+
+            const setTitle = (title: string) => setTask({ ...task, title })
+
+            const saveTask = async () => {
+              try {
+                setTask(await taskRepo.save(task))
+              } catch(error: unknown) {
+                alert((error as { message: string }).message)
+              }
+            }
+
+            const deleteTask = async () => {
+              try {
+                await taskRepo.delete(task)
+                setTasks(tasks.filter(t => t !== task))
+              } catch (error: unknown) {
+                alert((error as { message: string }).message)
+              }
+            }
             return (
               <div key={task.id}>
                 <input
@@ -52,7 +71,9 @@ export default function App() {
                   checked={task.completed}
                   onChange={e => setCompleted(e.target.checked)}
                 />
-                {task.title}
+                <input value={task.title} onChange={e => setTitle(e.target.value)} />
+                <button onClick={saveTask}>Save</button>
+                <button onClick={deleteTask}>Delete</button>
               </div>
             )
           })
