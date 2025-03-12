@@ -11,7 +11,7 @@ declare module 'remult' {
     }
 }
 
-const validUsers = [{ name: 'Jane' }, { name: 'Alex' }]
+const validUsers = [{ name: 'Jane', admin: true }, { name: 'Alex' }]
 
 export class AuthController {
     @BackendMethod({ allowed: true })

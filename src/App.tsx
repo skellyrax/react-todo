@@ -36,27 +36,29 @@ export default function App() {
     <div>
       <h1>Tasks</h1>
       <main>
-        <form onSubmit={addTask}>
-          <input
-            value={newTaskTitle}
-            placeholder="What needs to be done?"
-            onChange={e => setNewTaskTitle(e.target.value)}
-          />
-          <button type="submit">Add</button>
-        </form>
+        {taskRepo.metadata.apiInsertAllowed() && (
+          <form onSubmit={addTask}>
+            <input
+              value={newTaskTitle}
+              placeholder="What needs to be done?"
+              onChange={e => setNewTaskTitle(e.target.value)}
+            />
+            <button type="submit">Add</button>
+          </form>
+        )}
         {
           tasks.map(task => {
             const setTask = (value: Task) =>
               setTasks(tasks => tasks.map(t => (t === task ? value : t)))
             const setCompleted = async (completed: boolean) =>
-              await taskRepo.save({...task, completed })
+              await taskRepo.save({ ...task, completed })
 
             const setTitle = (title: string) => setTask({ ...task, title })
 
             const saveTask = async () => {
               try {
                 await taskRepo.save(task)
-              } catch(error: unknown) {
+              } catch (error: unknown) {
                 alert((error as { message: string }).message)
               }
             }
@@ -68,7 +70,7 @@ export default function App() {
                 alert((error as { message: string }).message)
               }
             }
-            
+
             return (
               <div key={task.id}>
                 <input
@@ -78,7 +80,9 @@ export default function App() {
                 />
                 <input value={task.title} onChange={e => setTitle(e.target.value)} />
                 <button onClick={saveTask}>Save</button>
-                <button onClick={deleteTask}>Delete</button>
+                {taskRepo.metadata.apiDeleteAllowed(task) && (
+                  <button onClick={deleteTask}>Delete</button>
+                )}
               </div>
             )
           })

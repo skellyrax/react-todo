@@ -1,23 +1,22 @@
-import { Entity, Fields, Allow } from 'remult'
+import { Allow, Entity, Fields } from "remult"
 
-@Entity('tasks', {
-    allowApiCrud: Allow.authenticated, // only authenticated users can create, read, update, and delete tasks
+@Entity<Task>("tasks", {
+    allowApiCrud: Allow.authenticated,
+    allowApiInsert: "admin",
+    allowApiDelete: "admin"
 })
-
 export class Task {
-    @Fields.cuid()
-    id = ''
+    @Fields.uuid()
+    id!: string
 
-    @Fields.string<Task>({
+    @Fields.string({
         validate: (task) => {
-            if (task.title.length < 3) throw "Too short"
-        }
+            if (task.title.length < 3) throw "Too Short"
+        },
+    allowApiUpdate: "admin"
     })
-    title = ''
+    title = ""
 
     @Fields.boolean()
     completed = false
-
-    @Fields.createdAt()
-    createdAt?: Date
 }
